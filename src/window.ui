@@ -6,6 +6,9 @@
     <property name="title">TelegramZ</property>
     <property name="default-width">1500</property>
     <property name="default-height">750</property>
+	<style>
+      <class name="devel"/>
+	</style>
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header_bar">
         <style>
