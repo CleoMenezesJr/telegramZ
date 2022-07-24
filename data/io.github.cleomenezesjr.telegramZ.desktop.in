@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=telegramz
+Exec=telegramz
+Icon=io.github.cleomenezesjr.telegramZ
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true
