@@ -3,7 +3,6 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="Adw" version="1.0"/>
   <template class="TelegramzWindow" parent="GtkApplicationWindow">
-    <property name="title">TelegramZ</property>
     <property name="default-width">1500</property>
     <property name="default-height">750</property>
 	<style>
@@ -14,6 +13,15 @@
         <style>
           <class name="head"/>
         </style>
+		<child type="title">
+          <object class="GtkEntry" id="srch_entry">
+            <property name="visible">True</property>
+            <property name="hexpand">True</property>
+            <property name="margin-start">500</property>
+            <property name="margin-end">500</property>
+            <property name="placeholder-text" translatable="yes">Search</property>
+          </object>
+        </child>
         <child type="start">
           <object class="GtkButton" id="btn_menu">
             <property name="icon-name">view-more-symbolic</property>

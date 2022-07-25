@@ -24,6 +24,7 @@ from gi.repository import Gtk, WebKit2
 class TelegramzWindow(Gtk.ApplicationWindow):
     __gtype_name__ = 'TelegramzWindow'
 
+    srch_entry = Gtk.Template.Child()
     btn_menu = Gtk.Template.Child()
 
     def __init__(self, **kwargs):
@@ -41,41 +42,44 @@ class TelegramzWindow(Gtk.ApplicationWindow):
         )
 
         self.set_child(self.web_view)
-        self.btn_menu.connect("clicked", self.on_reload_button_clicked)
-        self.web_view.connect("load-changed", self.say)
+        self.btn_menu.connect("clicked", self.on_menu_button)
+        self.web_view.connect("load-changed", self.set_style)
+        # self.web_view.connect("permission_request", self.menu_button)
+        self.srch_entry.connect("activate", self.on_search)
+        print(dir(self.srch_entry))
 
-    def on_reload_button_clicked(self, status):
+    def on_menu_button(self, status):
         self.web_view.run_javascript(
             """
             document.querySelector(".ripple-container").click()
             """
         )
 
-    def say(self, view, event):
+    def on_search(self, status):
+        self.web_view.run_javascript(
+            """
+            if (document.activeElement.className != 'form-control') document.getElementById('telegram-search-input').focus();
+            """
+        )
+
+    def set_style(self, view, event):
         if event == WebKit2.LoadEvent.FINISHED:
             self.web_view.run_javascript(
                 """
-                const myTimeout = setTimeout(setStyle, 100);
+                setTimeout(setStyle, 100);
                     function setStyle() {
                         let style = document.createElement('style');
                         style.type = 'text/css';
                         style.innerHTML = `
-                            .Button.smaller.translucent.round.has-ripple {
-                                    display: none !important;
-                                }
-                            .SearchInput {
-                                margin-left: auto !important;
-                                max-width: initial !important;
-                            }
                             .bubble.menu-container {
                                 margin-top: -30px !important;
                                 margin-left: -8px !important;
                             }
-
-
+                            #LeftMainHeader {
+                                margin-top: -4rem !important;
+                            }
                         `
                         document.head.appendChild(style);
                     }
                 """
             )
-
