@@ -18,11 +18,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from gi.repository import Gtk, WebKit2
+import logging
 
 
-@Gtk.Template(resource_path='/io/github/cleomenezesjr/telegramZ/window.ui')
+@Gtk.Template(resource_path="/io/github/cleomenezesjr/telegramZ/window.ui")
 class TelegramzWindow(Gtk.ApplicationWindow):
-    __gtype_name__ = 'TelegramzWindow'
+    __gtype_name__ = "TelegramzWindow"
 
     srch_entry = Gtk.Template.Child()
     btn_menu = Gtk.Template.Child()
@@ -31,34 +32,32 @@ class TelegramzWindow(Gtk.ApplicationWindow):
         super().__init__(**kwargs)
         self.web_view = WebKit2.WebView()
         self.web_view.load_uri("http://webz.dev")
-        self.web_view.run_javascript(
-            """
-            "Object.defineProperty(navigator, 'userAgent', {
-                get: function () {
-                    return '"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.0 Safari/605.1.15"';
-                }
-            });"
-            """
-        )
 
         self.set_child(self.web_view)
         self.btn_menu.connect("clicked", self.on_menu_button)
         self.web_view.connect("load-changed", self.set_style)
-        # self.web_view.connect("permission_request", self.menu_button)
         self.srch_entry.connect("activate", self.on_search)
-        print(dir(self.srch_entry))
+        self.web_view.connect("permission-request", self._permission)
 
     def on_menu_button(self, status):
         self.web_view.run_javascript(
+            # for some reason, using variables brake everything
             """
-            document.querySelector(".ripple-container").click()
+            if (document.querySelector("[title='Go back']")) {
+                document.querySelector("[title='Go back']").click()
+            } else if (document.querySelector("[title='Return to chat list']")) {
+                document.querySelector("[title='Return to chat list']").click()
+            } else {
+                document.querySelector(".ripple-container").click()
+            }
             """
         )
 
     def on_search(self, status):
         self.web_view.run_javascript(
             """
-            if (document.activeElement.className != 'form-control') document.getElementById('telegram-search-input').focus();
+            if (document.activeElement.className != 'form-control')
+              document.getElementById('telegram-search-input').focus();
             """
         )
 
@@ -66,13 +65,14 @@ class TelegramzWindow(Gtk.ApplicationWindow):
         if event == WebKit2.LoadEvent.FINISHED:
             self.web_view.run_javascript(
                 """
+                alert(navigator.userAgent)
                 setTimeout(setStyle, 100);
                     function setStyle() {
                         let style = document.createElement('style');
                         style.type = 'text/css';
                         style.innerHTML = `
                             .bubble.menu-container {
-                                margin-top: -30px !important;
+                                margin-top: 15px !important;
                                 margin-left: -8px !important;
                             }
                             #LeftMainHeader {
@@ -83,3 +83,9 @@ class TelegramzWindow(Gtk.ApplicationWindow):
                     }
                 """
             )
+
+    def _permission(self, webview: object, request: object):
+        """Grant permission for notifications."""
+        logging.info(f"PERMISSION: {request}")
+        if type(request) == WebKit2.NotificationPermissionRequest:
+            request.allow()

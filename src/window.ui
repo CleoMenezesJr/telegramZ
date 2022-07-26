@@ -3,8 +3,9 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="Adw" version="1.0"/>
   <template class="TelegramzWindow" parent="GtkApplicationWindow">
-    <property name="default-width">1500</property>
+    <property name="default-width">1300</property>
     <property name="default-height">750</property>
+	<property name="hexpand">true</property>
 	<style>
       <class name="devel"/>
 	</style>
@@ -16,9 +17,10 @@
 		<child type="title">
           <object class="GtkEntry" id="srch_entry">
             <property name="visible">True</property>
-            <property name="hexpand">True</property>
-            <property name="margin-start">500</property>
-            <property name="margin-end">500</property>
+			<property name="input-purpose">search</property>
+            <!-- <property name="hexpand">True</property> -->
+            <property name="max-width-chars">40</property>
+
             <property name="placeholder-text" translatable="yes">Search</property>
           </object>
         </child>
@@ -47,7 +49,7 @@
         <attribute name="action">win.show-help-overlay</attribute>
       </item>
       <item>
-        <attribute name="label" translatable="yes">_About Google_docs</attribute>
+        <attribute name="label" translatable="yes">_About TelegramZ</attribute>
         <attribute name="action">app.about</attribute>
       </item>
     </section>
